@@ -4,16 +4,17 @@ const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Replace with your frontend URL
 const corsOptions = {
   origin: 'https://mango-beach-006bb9800.2.azurestaticapps.net',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
+  credentials: true, // Optional, if you plan to use cookies or auth headers
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
+app.options('*', cors(corsOptions)); // 👈 Important: handle preflight requests
+
 
 // ✅ PostgreSQL config
 const pool = new Pool({
