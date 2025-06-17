@@ -4,7 +4,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
 
-  const response = await fetch('https://your-backend-api-url/login', {
+  const response = await fetch('/login', {  // 👈 fixed relative URL
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -12,13 +12,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     body: JSON.stringify({ username, password })
   });
 
-  const result = await response.json();
+  const result = await response.text();
 
   if (response.ok) {
     document.getElementById('message').textContent = 'Login successful!';
-    // TODO: redirect or store token
   } else {
-    document.getElementById('message').textContent = result.message || 'Login failed';
+    document.getElementById('message').textContent = result || 'Login failed';
   }
 });
-
