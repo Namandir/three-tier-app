@@ -1,43 +1,51 @@
 const express = require('express');
 const cors = require('cors');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ REPLACE this with your real frontend URL
+// Replace with your frontend URL
 const corsOptions = {
-  origin: 'https://mango-beach-006bb9800.2.azurestaticapps.net', // 👈 this is your frontend URL
+  origin: 'https://mango-beach-006bb9800.2.azurestaticapps.net',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
-  credentials: true
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Dummy users for now (replace with DB later)
-const users = [
-  { username: 'admin', password: 'admin123' },
-  { username: 'user', password: 'user123' }
-];
+// ✅ PostgreSQL config
+const pool = new Pool({
+  user: 'dbadmin',
+  host: 'flexible-db-layer.postgres.database.azure.com',
+  database: 'postgres',
+  password: 'Ervin000@',
+  port: 5432,
+  ssl: true // Required for Azure
+});
 
-// Login route with logging
-app.post('/login', (req, res) => {
+// Login route
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  console.log('Received login:', username, password);
+  try {
+    const query = 'SELECT * FROM users WHERE username = $1 AND password = $2';
+    const result = await pool.query(query, [username, password]);
 
-  const user = users.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    res.status(200).json({ message: 'Login successful' });
-  } else {
-    res.status(401).json({ message: 'Invalid username or password' });
+    if (result.rows.length > 0) {
+      res.status(200).json({ message: 'Login successful' });
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  } catch (err) {
+    console.error('DB error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Root route
+// Default route
 app.get('/', (req, res) => {
-  res.send('Backend is running');
+  res.send('Backend is running with PostgreSQL');
 });
 
 app.listen(PORT, () => {
