@@ -3,8 +3,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
-
-  const response = await fetch('/login', {  // 👈 fixed relative URL
+  const response = await fetch('https://backend-layer2-fxdqbegbfvf6cwg3.southeastasia-01.azurewebsites.net/login', {
+ // 👈 fixed relative URL
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
