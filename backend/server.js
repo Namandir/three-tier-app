@@ -4,11 +4,12 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Replace with your actual frontend domain
+// ✅ REPLACE this with your real frontend URL
 const corsOptions = {
-  origin: 'https://mango-beach-006bb9800.2.azurestaticapps.net/', // 🔁 Replace this
+  origin: 'https://mango-beach-006bb9800.2.azurestaticapps.net', // 👈 this is your frontend URL
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
+  credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -23,20 +24,18 @@ const users = [
 // Login route with logging
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  console.log('Received login request:', username, password);
+  console.log('Received login:', username, password);
 
   const user = users.find(u => u.username === username && u.password === password);
 
   if (user) {
-    console.log('✅ Login successful');
     res.status(200).json({ message: 'Login successful' });
   } else {
-    console.log('❌ Login failed');
     res.status(401).json({ message: 'Invalid username or password' });
   }
 });
 
-// Default route
+// Root route
 app.get('/', (req, res) => {
   res.send('Backend is running');
 });
